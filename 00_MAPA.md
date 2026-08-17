@@ -2,26 +2,28 @@
 
 **Hub de navegação centralizado.** Comece aqui para encontrar qualquer documentação, spec ou referência técnica.
 
+> 📁 **Estrutura reorganizada em 17/08/2026:** Pastas temáticas para melhor fluxo de trabalho. Veja `README_ESTRUTURA.md` para orientação.
+
 ---
 
 ## Municípios
 
 | Município | Pasta | README | Status |
 |---|---|---|---|
-| **Santos** | `Santos/` | `Santos/README.md` | 🔴 produção |
-| **Osasco** | `Osasco/` | `Osasco/README.md` | 🟢 ativo |
-| **Acto (Plataforma)** | `Acto/` | `Acto/README.md` | 🟢 ativo |
-| **Mauá** | `Mauá/` | `Mauá/README.md` | 🟡 secundário |
-| São José do Rio Preto | `SJRP/` | — | ⚪ planejamento |
-| Aparecida de Goiânia | `Aparecida de Goiânia/` | — | ⚪ planejamento |
+| **Santos** | `01-Municípios/Santos/` | `01-Municípios/Santos/README.md` | 🔴 produção |
+| **Osasco** | `01-Municípios/Osasco/` | `01-Municípios/Osasco/README.md` | 🟢 ativo |
+| **Acto (Plataforma)** | `01-Municípios/Acto/` | `01-Municípios/Acto/README.md` | 🟢 ativo |
+| **Mauá** | `01-Municípios/Mauá/` | `01-Municípios/Mauá/README.md` | 🟡 secundário |
+| São José do Rio Preto | `01-Municípios/SJRP/` | — | ⚪ planejamento |
+| Aparecida de Goiânia | `01-Municípios/Aparecida de Goiânia/` | — | ⚪ planejamento |
 
 ---
 
 ## Acto — Plataforma
 
-**Veja:** `Acto/README.md` — documentação técnica e negócio da plataforma Acto
+**Veja:** `01-Municípios/Acto/README.md` — documentação técnica e negócio da plataforma Acto
 
-Documentos principais em `Acto/`:
+Documentos principais em `01-Municípios/Acto/`:
 - `DOCUMENTACAO_TECNICA_ACTO.md` — API, schemas, endpoints
 - `DOCUMENTACAO_NEGOCIO_ACTO.md` — fluxos de negócio
 - `SCHEMA_LAKEHOUSE_ACTO.md` — Schemas bronze/silver/gold
@@ -31,13 +33,13 @@ Documentos principais em `Acto/`:
 
 ## Dados Públicos
 
-**Veja:** `Dados Públicos/README.md` — projeto de dados públicos (IBGE, RAIS, CAGED, Saúde, Educação)
+**Veja:** `03-Dados/Dados Públicos/README.md` — projeto de dados públicos (IBGE, RAIS, CAGED, Saúde, Educação)
 
 Documentos principais:
 - `GUIA_MESTRE_DADOS_PUBLICOS.md` — roadmap geral
 - `Mapeamento_Tecnico_Dados_Publicos.md` — fontes e pipelines
 - `Saude_Educacao/` — DATASUS, Censo Escolar, IDEB
-- Specs em `specs/` (prefixo `spec_drive_dados_publicos`)
+- Specs em `04-Specs/` (prefixo `spec_drive_dados_publicos`)
 
 ---
 
@@ -54,7 +56,7 @@ Documentos:
 
 ## Documentação Técnica Geral
 
-**Veja:** `doc/` — referência técnica consolidada
+**Veja:** `02-Técnica/Arquitetura/` — referência técnica consolidada
 
 Documentos essenciais:
 - `DOCUMENTACAO_CONSOLIDADA_FABRIC.md` — Arquitetura completa
@@ -67,13 +69,13 @@ Documentos essenciais:
 
 ## PowerBI Santos — PDFs
 
-**Veja:** `Powerbi-Santos/` — PDFs exportados dos 19 painéis (atualizado trimestralmente)
+**Veja:** `03-Dados/Power BI/` — PDFs exportados dos 19 painéis (atualizado trimestralmente)
 
 ---
 
 ## Painéis de Negócio
 
-**Veja:** `paineis_negocio/00_indice_paineis.md`
+**Veja:** `05-Painéis/00_indice_paineis.md`
 
 6 painéis principais (F1–F6):
 - **F1** — Acompanhamento Serviços (avaliação, SLA)
@@ -87,19 +89,19 @@ Documentos essenciais:
 
 ## Utils Compartilhados
 
-**Veja:** `utils/00_INDEX_UTILS.md` — notebooks utilitários compartilhados
+**Veja:** `02-Técnica/Utils/00_INDEX_UTILS.md` — notebooks utilitários compartilhados
 
 ---
 
 ## Diagramas
 
-**Veja:** `diagramas/README.md` — Índice de diagramas (canvas, mermaid, images)
+**Veja:** `02-Técnica/Diagramas/README.md` — Índice de diagramas (canvas, mermaid, images)
 
 ---
 
 ## Specs e Planos de Implementação
 
-**Veja:** `specs/00_INDEX_SPECS.md` — Todas as especificações e planos
+**Veja:** `04-Specs/00_INDEX_SPECS.md` — Todas as especificações e planos
 
 Specs estratégicos:
 - `spec_drive_roadmap_migracao.md` — Migração Santos → lh_solicitacoes_acto

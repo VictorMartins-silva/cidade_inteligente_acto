@@ -601,7 +601,7 @@ TOKEN = TOKEN_MAUA
 extrair_tabela_acto_gestao(arquivo="payload_maua_*.json", lista_cod_catalogo=[...])
 ```
 
-Wrapper próprio: `nb_utils_maua_ingest_acto_gestao` em `utils/` com `extrair_tabela_acto_gestao()` adaptado para o endpoint de Mauá.
+Wrapper próprio: `nb_utils_maua_ingest_acto_gestao` em `02-Técnica/Utils/` com `extrair_tabela_acto_gestao()` adaptado para o endpoint de Mauá.
 
 ---
 
