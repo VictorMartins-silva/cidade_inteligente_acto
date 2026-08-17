@@ -1,0 +1,1 @@
+https://ozmundi.osasco.sp.gov.br/geoserver/app/ows?service=WFS&version=2.0.0&request=GetFeature&typeName=app:geo_quadra&maxFeatures=1000000&outputFormat=SHAPE-ZIP&srsName=EPSG:31983
