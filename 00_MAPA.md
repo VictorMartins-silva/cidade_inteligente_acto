@@ -189,6 +189,23 @@ status: "ativo"
 
 ---
 
-## Guia Completo
+---
 
-[[Documentação_Fabric/GUIA_COMPLETO_FABRIC_MEGA|GUIA_COMPLETO_FABRIC_MEGA]] — guia completo consolidado
+## 📚 Hierarquia de Documentação
+
+### Índice vs. Referência Técnica
+
+Este arquivo (**00_MAPA.md**) é o **hub de navegação** — comece aqui para encontrar qualquer documento.
+
+[[Documentação_Fabric/REFERÊNCIA_TÉCNICA_COMPLETA|**REFERÊNCIA_TÉCNICA_COMPLETA.md**]] é a **referência consolidada** com conteúdo técnico profundo:
+- Arquitetura detalhada (Medallion, schemas, fluxos)
+- Inventário completo de notebooks por município
+- Riscos técnicos e mitigações (R1–R9)
+- Padrões, convenções e SCD Type 2
+- Pipelines de orquestração
+
+**Quando usar cada um:**
+| Documento | Use quando... |
+|---|---|
+| **00_MAPA.md** (este) | Precisa navegar, encontrar um documento específico, ou visão geral rápida |
+| **REFERÊNCIA_TÉCNICA_COMPLETA.md** | Desenvolvendo/debugando notebooks, entendendo arquitetura, investigando riscos |
