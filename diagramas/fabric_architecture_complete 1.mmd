@@ -1,0 +1,175 @@
+graph TB
+    subgraph Workspace["Microsoft Fabric Workspace"]
+        subgraph Lakehouse["Lakehouse: lh_cidade_inteligente_santos"]
+            
+            subgraph Sources["External Data Sources"]
+                CSV["Files/acto/exportar.csv<br/>(Manual Export) R1"]
+                XLSX["Files/acto/tb_aux.xlsx<br/>(Manual Upload) R1"]
+                API_SANTOS["Acto API - Santos"]
+                API_OBRAS["Acto API - Obras<br/>R5: Token 401"]
+            end
+            
+            subgraph Bronze["🔶 BRONZE LAYER - Raw Ingestion"]
+                NB1["nb_ingest_acto_santos"]
+                NB2["nb_ingest_dim_date"]
+                NB3["nb_ingest_tb_aux_servicos"]
+                NB9["nb_ingest_carta_servicos"]
+                NB10["nb_ingest_estrutura_cet"]
+                
+                TB_OS["tb_os_acto<br/>(Fato)"]
+                DIM_DATE["dim_date_1/2<br/>(Dimensão)"]
+                TB_AUX["tb_aux_servicos<br/>(Auxiliar)"]
+                CARTA_RAW["raw_cadastro_carta"]
+                
+                NB1 -->|overwrite| TB_OS
+                NB2 -->|overwrite| DIM_DATE
+                NB3 -->|overwrite| TB_AUX
+                NB9 -->|overwrite| CARTA_RAW
+                NB10 -->|overwrite| TB_AUX
+            end
+            
+            subgraph Silver["🟣 SILVER LAYER - Cleansing"]
+                NB6["nb_silver_santos_avaliacao"]
+                NB11["nb_ingest_silver_cet"]
+                NB14["nb_ingest_santos_curso"]
+                NB18["nb_ingest_silver_obras"]
+                
+                SILVER_AVAL["silver_avaliacoes<br/>(Parquet)"]
+                SILVER_CET["silver_cet_carga<br/>(Parquet)"]
+                SILVER_CURSO["silver_curso_motorista<br/>(Parquet)"]
+                SILVER_OBRAS["silver_obras_santos<br/>(Parquet)"]
+                
+                NB6 -->|overwrite| SILVER_AVAL
+                NB11 -->|overwrite| SILVER_CET
+                NB14 -->|overwrite| SILVER_CURSO
+                NB18 -->|overwrite| SILVER_OBRAS
+            end
+            
+            subgraph Utils["⚙️ UTILS LAYER - Shared Functions"]
+                NB4["nb_utils_api_acto_gestao"]
+                NB5["nb_utils_api_acto_obras<br/>R5: Token 401"]
+            end
+            
+            subgraph Gold["🟡 GOLD LAYER - Business Logic"]
+                NB7["nb_gold_santos_avaliacao"]
+                NB8["nb_gold_avaliacao_sentimento<br/>R3: Desalinhamento"]
+                NB12["nb_gold_cet_carga_descarga"]
+                NB13["nb_gold_acto_gestao_cet"]
+                NB15["nb_gold_curso_motorista"]
+                NB16["nb_gold_manifestacoes"]
+                NB17["nb_gold_ouvidoria_servicos"]
+                NB19["nb_gold_acto_obras<br/>BLOQUEADO R5"]
+                NB20["nb_gold_obras_etapas<br/>BLOQUEADO R5"]
+                NB21["nb_gold_obras_seont<br/>BLOQUEADO R5"]
+                NB22["nb_gold_acto_sepref"]
+                NB23["nb_gold_acto_segov"]
+                NB24["nb_gold_acto_seinfra"]
+                
+                GOLD_AVAL["gold_avaliacoes_servico<br/>(Fato)"]
+                GOLD_SENT["gold_avaliacoes_sentimento<br/>(Enriquecimento)"]
+                GOLD_CARTA["gold_carta_servicos<br/>(Fato)"]
+                GOLD_CET_CD["gold_cet_carga_descarga<br/>(Fato)"]
+                GOLD_CET_SRV["gold_cet_servicos<br/>(Fato)"]
+                GOLD_CURSO["gold_curso_motorista<br/>(Fato)"]
+                GOLD_MANIF["gold_manifestacoes<br/>(Fato)"]
+                GOLD_OUV["gold_ouvidoria_servicos<br/>(Consolidado)"]
+                GOLD_OBRAS["gold_pdr_acompanhamentos<br/>BLOQUEADO"]
+                GOLD_OBRAS_ETAP["gold_obras_etapas<br/>BLOQUEADO"]
+                GOLD_SEPREF["gold_sepref_servicos<br/>(Fato)"]
+                GOLD_SEGOV["gold_segov_servicos<br/>(Fato)"]
+                GOLD_SEINFRA["gold_seinfra_servicos<br/>(Fato)"]
+                
+                NB7 -->|overwrite| GOLD_AVAL
+                NB8 -->|append| GOLD_SENT
+                NB12 -->|overwrite| GOLD_CET_CD
+                NB13 -->|overwrite| GOLD_CET_SRV
+                NB15 -->|overwrite| GOLD_CURSO
+                NB16 -->|overwrite| GOLD_MANIF
+                NB17 -->|union| GOLD_OUV
+                NB19 -->|overwrite| GOLD_OBRAS
+                NB20 -->|overwrite| GOLD_OBRAS_ETAP
+                NB22 -->|overwrite| GOLD_SEPREF
+                NB23 -->|overwrite| GOLD_SEGOV
+                NB24 -->|overwrite| GOLD_SEINFRA
+            end
+            
+            CSV --> NB1
+            XLSX --> NB3
+            API_SANTOS --> NB4
+            API_OBRAS --> NB5
+            
+            TB_OS --> SILVER_AVAL
+            TB_OS --> SILVER_CET
+            TB_OS --> SILVER_OBRAS
+            TB_AUX --> SILVER_AVAL
+            TB_AUX --> SILVER_CET
+            
+            SILVER_AVAL --> NB7
+            SILVER_CET --> NB12
+            SILVER_CURSO --> NB15
+            SILVER_OBRAS --> NB19
+            
+            NB4 -.->|functions| NB7
+            NB4 -.->|functions| NB12
+            NB4 -.->|functions| NB13
+            NB4 -.->|functions| NB22
+            NB4 -.->|functions| NB23
+            NB4 -.->|functions| NB24
+            NB5 -.->|functions| NB19
+            NB5 -.->|functions| NB20
+            
+            GOLD_AVAL --> GOLD_SENT
+            GOLD_MANIF --> GOLD_OUV
+            GOLD_SEPREF --> GOLD_OUV
+            GOLD_SEGOV --> GOLD_OUV
+            GOLD_SEINFRA --> GOLD_OUV
+        end
+        
+        subgraph PBI["📊 POWER BI"]
+            PBI_DASH["Power BI Dashboards<br/>(4+ Reports)"]
+            PBI_BLOCKED["BLOCKED REPORTS<br/>Obras - Since 11/03"]
+        end
+        
+        GOLD_OUV --> PBI_DASH
+        GOLD_SEPREF --> PBI_DASH
+        GOLD_SEGOV --> PBI_DASH
+        GOLD_SEINFRA --> PBI_DASH
+        GOLD_AVAL --> PBI_DASH
+        GOLD_SENT --> PBI_DASH
+        GOLD_OBRAS --> PBI_BLOCKED
+        GOLD_OBRAS_ETAP --> PBI_BLOCKED
+    end
+    
+    subgraph Risks["⚠️ CRITICAL RISKS"]
+        R5["R5: HTTP 401 Obras<br/>Token Expired<br/>Blocks: 4 notebooks<br/>Impact: 4 dashboards"]
+        R3["R3: Desalinhamento<br/>overwrite + append<br/>Inconsistent data"]
+        R1["R1: Manual Files<br/>CSV/Excel Dependencies<br/>Human Error Risk"]
+        R2["R2: Duplicated Functions<br/>Divergent Logic<br/>Maintenance Issue"]
+        R7["R7: No Error Handling<br/>raise_for_status()<br/>Affects: 4+ notebooks"]
+    end
+    
+    API_OBRAS -.->|causes| R5
+    CSV -.->|causes| R1
+    XLSX -.->|causes| R1
+    NB8 -.->|causes| R3
+    NB1 -.->|causes| R2
+    NB4 -.->|causes| R7
+    
+    style Bronze fill:#fed7aa,stroke:#ea580c,stroke-width:2px
+    style Silver fill:#e9d5ff,stroke:#7c3aed,stroke-width:2px
+    style Gold fill:#fef3c7,stroke:#d97706,stroke-width:2px
+    style Utils fill:#d1d5db,stroke:#374151,stroke-width:2px
+    style PBI fill:#fef08a,stroke:#eab308,stroke-width:3px
+    style Risks fill:#fee2e2,stroke:#dc2626,stroke-width:3px
+    style R5 fill:#fecaca,stroke:#dc2626,stroke-width:2px
+    style R3 fill:#fed7aa,stroke:#f59e0b,stroke-width:2px
+    style R1 fill:#fed7aa,stroke:#f59e0b,stroke-width:2px
+    style R2 fill:#fef08a,stroke:#f59e0b,stroke-width:2px
+    style R7 fill:#fed7aa,stroke:#f59e0b,stroke-width:2px
+    style PBI_BLOCKED fill:#fee2e2,stroke:#dc2626,stroke-width:2px
+    style NB5 fill:#fee2e2,stroke:#dc2626,stroke-width:2px
+    style NB19 fill:#fee2e2,stroke:#dc2626,stroke-width:2px
+    style NB20 fill:#fee2e2,stroke:#dc2626,stroke-width:2px
+    style NB21 fill:#fee2e2,stroke:#dc2626,stroke-width:2px
+    style GOLD_OBRAS fill:#fee2e2,stroke:#dc2626,stroke-width:2px
+    style GOLD_OBRAS_ETAP fill:#fee2e2,stroke:#dc2626,stroke-width:2px

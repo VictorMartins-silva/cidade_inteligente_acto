@@ -1,0 +1,284 @@
+{
+  "nodes": [
+
+    // ─────────────────────────────────────────────
+    // GRUPO: MUNICÍPIOS (topo)
+    // ─────────────────────────────────────────────
+    {
+      "id": "grp-municipios",
+      "x": -1600, "y": -1080,
+      "width": 3000, "height": 380,
+      "type": "group",
+      "label": "MUNICÍPIOS",
+      "color": "5"
+    },
+    {
+      "id": "n-dp",
+      "x": -1560, "y": -1040,
+      "width": 320, "height": 300,
+      "type": "text", "color": "5",
+      "text": "## 🗂️ Dados Públicos\n**Lakehouse:** `lh_dados_publicos`\n**Notebooks:** 5\n**Cobertura:** 15 municípios\n\n**Fontes:**\nIBGE SIDRA · BigQuery RAIS\n\n**Clusters:**\nSantos · Osasco · Mauá"
+    },
+    {
+      "id": "n-maua",
+      "x": -1180, "y": -1040,
+      "width": 320, "height": 300,
+      "type": "text", "color": "5",
+      "text": "## 🏙️ Mauá\n**Lakehouse:** `lh_cidade_inteligente_maua`\n**Notebooks:** 4\n**Domínios:** 2\n\n✅ Meio Ambiente\n✅ Planejamento Urbano\n\n⚠️ Migração Parquet→Delta pendente"
+    },
+    {
+      "id": "n-osasco",
+      "x": -800, "y": -1040,
+      "width": 340, "height": 300,
+      "type": "text", "color": "5",
+      "text": "## 🏙️ Osasco\n**Lakehouse:** `lh_cidade_inteligente_osasco`\n**Notebooks:** 31 · **Domínios:** 11\n\n✅ Assist. Social · CAGED · RAIS\n✅ Bolsa Trabalho · BPC · Comex\n✅ Obras · Seg. Viária · Seg. Pública\n\n🔴 BPC: escrita Gold comentada\n🟠 Censo + RAIS: CSV → Delta"
+    },
+    {
+      "id": "n-santos",
+      "x": -380, "y": -1040,
+      "width": 400, "height": 300,
+      "type": "text", "color": "4",
+      "text": "## ⭐ Santos — Principal\n**Lakehouse:** `lh_cidade_inteligente_santos`\n**Workspace:** `96fe5a53-3a22-4443-8d0a`\n**Capacidade:** Diamante · Brazil South\n\n**~37 notebooks · 9 pipelines**\n**19 dashboards Power BI**\n**10 domínios de serviço**"
+    },
+    {
+      "id": "n-impl",
+      "x": 100, "y": -1040,
+      "width": 300, "height": 300,
+      "type": "text", "color": "3",
+      "text": "## 🔧 Em Implantação\n\n**Aparecida de Goiânia**\n→ Pasta criada, sem notebooks\n\n**São José do Rio Preto**\n→ Pasta criada, sem notebooks\n\n_Atualizar quando NB disponibilizados_"
+    },
+
+    // ─────────────────────────────────────────────
+    // GRUPO: ARQUITETURA MEDALLION (esquerda)
+    // ─────────────────────────────────────────────
+    {
+      "id": "grp-arch",
+      "x": -1600, "y": -500,
+      "width": 380, "height": 760,
+      "type": "group",
+      "label": "ARQUITETURA MEDALLION",
+      "color": "6"
+    },
+    {
+      "id": "n-fonte",
+      "x": -1560, "y": -460,
+      "width": 300, "height": 90,
+      "type": "text", "color": "6",
+      "text": "**☁️ FONTE OPERACIONAL**\nActo API · CSV · FTP · BigQuery"
+    },
+    {
+      "id": "n-bronze",
+      "x": -1560, "y": -340,
+      "width": 300, "height": 90,
+      "type": "text", "color": "1",
+      "text": "**🔵 BRONZE** — Raw\nDelta / CSV / Parquet bruto\n_sem transformação_"
+    },
+    {
+      "id": "n-silver",
+      "x": -1560, "y": -220,
+      "width": 300, "height": 90,
+      "type": "text", "color": "4",
+      "text": "**🟢 SILVER** — Cleaned\nParquet — tipado, dedup, validado\nSCD Type 2"
+    },
+    {
+      "id": "n-gold",
+      "x": -1560, "y": -100,
+      "width": 300, "height": 90,
+      "type": "text", "color": "3",
+      "text": "**🟡 GOLD** — Business-Ready\nDelta Tables — dimensões, fatos\nagreg. e indicadores"
+    },
+    {
+      "id": "n-goldai",
+      "x": -1560, "y": 20,
+      "width": 300, "height": 90,
+      "type": "text", "color": "1",
+      "text": "**🔴 GOLD+IA** — Enriquecido\nSentimento · Scoring\nAzure Cognitive Services"
+    },
+    {
+      "id": "n-bi-arch",
+      "x": -1560, "y": 140,
+      "width": 300, "height": 90,
+      "type": "text", "color": "5",
+      "text": "**📊 POWER BI**\n19 dashboards\nSQL Endpoint do Lakehouse"
+    },
+
+    // ─────────────────────────────────────────────
+    // CENTRAL: MEGA GUIDE (arquivo)
+    // ─────────────────────────────────────────────
+    {
+      "id": "mega",
+      "x": -220, "y": -360,
+      "width": 440, "height": 420,
+      "type": "file",
+      "file": "Documentação_Fabric/GUIA_COMPLETO_FABRIC_MEGA.md"
+    },
+
+    // ─────────────────────────────────────────────
+    // GRUPO: MÓDULO ACTO API (centro-esquerda)
+    // ─────────────────────────────────────────────
+    {
+      "id": "n-acto-api",
+      "x": -1060, "y": 180,
+      "width": 340, "height": 260,
+      "type": "text", "color": "6",
+      "text": "## ⚙️ Módulo Acto — API\n**Tokens:** TOKEN_SANTOS · TOKEN_OSASCO · TOKEN_MAUA\n\n**Utils Centrais:**\n`nb_utils_api_acto_gestao`\n`nb_utils_api_acto_gestao_obras`\n`nb_utils_ingest_acto_gestao`\n\n**Padrão:** `codCatalogo` + `codigos_etapa` por domínio"
+    },
+
+    // ─────────────────────────────────────────────
+    // GRUPO: POWER BI (direita)
+    // ─────────────────────────────────────────────
+    {
+      "id": "grp-pbi",
+      "x": 420, "y": -500,
+      "width": 420, "height": 760,
+      "type": "group",
+      "label": "POWER BI — 6 FAMÍLIAS · 19 DASHBOARDS",
+      "color": "5"
+    },
+    {
+      "id": "n-f1",
+      "x": 460, "y": -460,
+      "width": 340, "height": 100,
+      "type": "text", "color": "5",
+      "text": "**F1 — Acompanhamento Serviços** (5)\nSEGOV · SEINFRA · CET · SEPREF · OUVIDORIA\n_Padrão InMov · SegoeUI-Bold 25pt_"
+    },
+    {
+      "id": "n-f2",
+      "x": 460, "y": -330,
+      "width": 340, "height": 100,
+      "type": "text", "color": "5",
+      "text": "**F2 — Manifestações Ouvidoria** (5)\nGeral + CET + SEGOV + SEINFRA + SEPREF\n`gold_manifestacoes_ouvidoria`"
+    },
+    {
+      "id": "n-f3",
+      "x": 460, "y": -200,
+      "width": 340, "height": 100,
+      "type": "text", "color": "4",
+      "text": "**F3 — Avaliação de Serviços** (1)\nKPIs em estrelas 0–5★ · Sentimento IA\n`gold_avaliacoes_servico` + sentimento"
+    },
+    {
+      "id": "n-f4",
+      "x": 460, "y": -70,
+      "width": 340, "height": 100,
+      "type": "text", "color": "5",
+      "text": "**F4 — Carta de Serviços** (1)\nGestão de catálogo · SLA\n`gold_carta_servicos` (Yuri)"
+    },
+    {
+      "id": "n-f5",
+      "x": 460, "y": 60,
+      "width": 340, "height": 100,
+      "type": "text", "color": "1",
+      "text": "**F5 — Obras / PDR I** (5) 🔴\n⚠️ PIPELINE PARADO desde 11/03/2025\n5 dashboards com dados obsoletos"
+    },
+    {
+      "id": "n-f6",
+      "x": 460, "y": 190,
+      "width": 340, "height": 100,
+      "type": "text", "color": "5",
+      "text": "**F6 — Curso de Motorista** (2)\nCET Santos · habilitação\n`gold_curso_motorista`"
+    },
+
+    // ─────────────────────────────────────────────
+    // GRUPO: RISCOS CRÍTICOS (baixo-esquerda)
+    // ─────────────────────────────────────────────
+    {
+      "id": "grp-risks",
+      "x": -1600, "y": 520,
+      "width": 1620, "height": 340,
+      "type": "group",
+      "label": "🚨 RISCOS CRÍTICOS ATIVOS (R1–R9)",
+      "color": "1"
+    },
+    {
+      "id": "n-r5",
+      "x": -1560, "y": 560,
+      "width": 460, "height": 260,
+      "type": "text", "color": "1",
+      "text": "## 🔴 R5 — Obras · 401 Unauthorized\n**Desde:** 11/03/2025\n**Token:** `TOKEN_SANTOS_OBRAS` expirado\n**Impacto:** 5 dashboards desatualizados\n**Pipeline:** `pl_ingest_obras_santos` ❌\n\n**Fix:** renovar token com SEONT\n**Resp:** Yuri · **Prazo:** 1 semana"
+    },
+    {
+      "id": "n-r9",
+      "x": -1040, "y": 560,
+      "width": 460, "height": 260,
+      "type": "text", "color": "1",
+      "text": "## 🔴 R9 — CAGED · Hardcode IBGE\n**NB nunca executado em produção**\n`353440` (Osasco) ≠ `353845` (Santos)\n\n⛔ NUNCA executar sem corrigir!\n\n**Fix:** alterar código IBGE\n**Resp:** Victor ou Yuri · **Prazo:** 3-5 dias"
+    },
+    {
+      "id": "n-r1",
+      "x": -520, "y": 560,
+      "width": 460, "height": 260,
+      "type": "text", "color": "2",
+      "text": "## 🟠 R1 — Carta · Dual Ingestion\n**Path A** (Victor): API — nunca rodou\n**Path B** (Francisco): CSV — produção ✅\n\nSem validação de rowcount em ambos\n\n**Fix:** escolher Path B, arquivar A\n**Resp:** Victor+Francisco+Yuri"
+    },
+
+    // ─────────────────────────────────────────────
+    // GRUPO: ROADMAP SLA (baixo-direita)
+    // ─────────────────────────────────────────────
+    {
+      "id": "grp-roadmap",
+      "x": 100, "y": 520,
+      "width": 760, "height": 340,
+      "type": "group",
+      "label": "📋 ROADMAP — NOVO ESCOPO SLA / CARTA DE SERVIÇOS",
+      "color": "3"
+    },
+    {
+      "id": "n-roadmap",
+      "x": 140, "y": 560,
+      "width": 680, "height": 260,
+      "type": "text", "color": "3",
+      "text": "## Fases F3–F6 · A Fazer (Victor)\n\n| Fase | Notebook | Status |\n|---|---|---|\n| F3 | `nb_ingest_cartas_servico` | 🔲 Criar |\n| F4 | `nb_silver_cartas_servico` (SCD2) | 🔲 Criar |\n| F5 | `nb_gold_dim_cartas_vigencia` + `fato_solicitacoes` | 🔲 Criar |\n| F6 | `nb_gold_sla_indicadores` + Power BI | 🔲 Criar |\n\n**Join SCD2 correto:**\n`dt_abertura BETWEEN dt_inicio_vigencia AND dt_fim_vigencia`\nCSV fonte: `exportar_4.csv` · 693 registros · `;` · UTF-8 BOM"
+    },
+
+    // ─────────────────────────────────────────────
+    // PADRÕES (centro-baixo)
+    // ─────────────────────────────────────────────
+    {
+      "id": "n-padroes",
+      "x": -220, "y": 180,
+      "width": 340, "height": 260,
+      "type": "text", "color": "6",
+      "text": "## 📐 Padrões\n**Nomenclatura:** `nb_{camada}_{municipio}_{dominio}`\n\n**Pipeline padrão:**\nNB Gold → RefreshSqlEndpoint → Refresh PBI\n\n**Escrita Gold:** overwrite (simples) / append (histórico)\n\n**Violação conhecida:**\n`gold_curso_motorista` → falta `nb_` e município\n\n**Equipe:**\n⭐ Yuri · Victor · Francisco"
+    }
+  ],
+
+  "edges": [
+    // Municípios → MEGA
+    {"id":"e-dp","fromNode":"n-dp","fromSide":"bottom","toNode":"mega","toSide":"top"},
+    {"id":"e-maua","fromNode":"n-maua","fromSide":"bottom","toNode":"mega","toSide":"top"},
+    {"id":"e-osasco","fromNode":"n-osasco","fromSide":"bottom","toNode":"mega","toSide":"top"},
+    {"id":"e-santos","fromNode":"n-santos","fromSide":"bottom","toNode":"mega","toSide":"top"},
+
+    // Arquitetura interna: fluxo descendente
+    {"id":"e-f-b","fromNode":"n-fonte","fromSide":"bottom","toNode":"n-bronze","toSide":"top","label":"Data Factory"},
+    {"id":"e-b-s","fromNode":"n-bronze","fromSide":"bottom","toNode":"n-silver","toSide":"top","label":"nb_ingest_*"},
+    {"id":"e-s-g","fromNode":"n-silver","fromSide":"bottom","toNode":"n-gold","toSide":"top","label":"nb_silver_* / nb_gold_*"},
+    {"id":"e-g-ga","fromNode":"n-gold","fromSide":"bottom","toNode":"n-goldai","toSide":"top","label":"nb_*_sentimento"},
+    {"id":"e-ga-bi","fromNode":"n-goldai","fromSide":"bottom","toNode":"n-bi-arch","toSide":"top","label":"SQL Endpoint"},
+
+    // Arquitetura → MEGA
+    {"id":"e-arch-mega","fromNode":"n-bi-arch","fromSide":"right","toNode":"mega","toSide":"left"},
+
+    // Acto API → MEGA
+    {"id":"e-acto-mega","fromNode":"n-acto-api","fromSide":"right","toNode":"mega","toSide":"left"},
+
+    // MEGA → Power BI
+    {"id":"e-mega-pbi","fromNode":"mega","fromSide":"right","toNode":"n-f1","toSide":"left"},
+    {"id":"e-mega-pbi2","fromNode":"mega","fromSide":"right","toNode":"n-f3","toSide":"left"},
+    {"id":"e-mega-pbi3","fromNode":"mega","fromSide":"right","toNode":"n-f5","toSide":"left"},
+
+    // Riscos → MEGA
+    {"id":"e-r5","fromNode":"n-r5","fromSide":"top","toNode":"mega","toSide":"bottom","color":"1"},
+    {"id":"e-r9","fromNode":"n-r9","fromSide":"top","toNode":"mega","toSide":"bottom","color":"1"},
+    {"id":"e-r1","fromNode":"n-r1","fromSide":"top","toNode":"mega","toSide":"bottom","color":"2"},
+
+    // R5 → F5 (obras parado)
+    {"id":"e-r5-f5","fromNode":"n-r5","fromSide":"right","toNode":"n-f5","toSide":"bottom","color":"1","label":"causa"},
+
+    // Roadmap → MEGA
+    {"id":"e-rm","fromNode":"n-roadmap","fromSide":"top","toNode":"mega","toSide":"bottom","color":"3","label":"F3-F6 pendentes"},
+
+    // Padrões → MEGA
+    {"id":"e-pad","fromNode":"n-padroes","fromSide":"top","toNode":"mega","toSide":"bottom"}
+  ]
+}

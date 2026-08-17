@@ -1,0 +1,36 @@
+{
+	"nodes":[
+		{"id":"a0b1c2d3e4f50050","type":"group","x":1400,"y":-60,"width":560,"height":840,"color":"6","label":"📊 Power BI — 4 Painéis Ativos"},
+		{"id":"a0b1c2d3e4f50040","type":"group","x":860,"y":-60,"width":440,"height":840,"color":"4","label":"🥇 Gold — Tabelas de Consumo (lh_cidade_inteligente_santos)"},
+		{"id":"a0b1c2d3e4f50020","type":"group","x":380,"y":-60,"width":400,"height":560,"color":"5","label":"🥈 Silver — Camada de Ingestão"},
+		{"id":"f5618d1d4af7157f","x":207,"y":-29,"width":250,"height":60,"type":"text","text":""},
+		{"id":"a0b1c2d3e4f50001","type":"text","text":"# 🏗️ Obras Santos — Fluxo Técnico de Dados\n**Workspace:** `lh_cidade_inteligente_santos` · **Pipeline:** `pl_ingest_obras_santos` (9 atividades) · **Agendamento:** Diário 00h30 BRT","x":-60,"y":-280,"width":2040,"height":70},
+		{"id":"a0b1c2d3e4f50002","type":"text","text":"> [!danger] ❌ Pipeline parada desde **11/03/2025** — HTTP 401 no `TOKEN_SANTOS_OBRAS` (issue R5 Crítico). Todos os 4 painéis com dados congelados há 14+ meses. Não usar para tomada de decisão.","x":-60,"y":-190,"width":2040,"height":60,"color":"1"},
+		{"id":"a0b1c2d3e4f50010","type":"text","text":"## 🌐 API Acto Gestão\n\nToken: `TOKEN_SANTOS_OBRAS`\nPayload: `payload_obras.json`\n\n---\n\nEndpoint:\n`POST /api/RelatoriosEtapa/`\n`ObterTempoEtapaRelatorio`\n\n---\n\n**Auth:** Login dinâmico\n`login_acto_gestao_obras()`\n\nVida do token: curta\n(dias, não semanas)\n\n---\n\n> ❌ HTTP 401\n> desde 11/03/2025\n> Fix: try/except 401\n> → relogin → retry","x":-60,"y":0,"width":360,"height":500,"color":"1"},
+		{"id":"a0b1c2d3e4f50021","type":"text","text":"## silver_obras_solicitacoes.parquet\n\n~11.000 solicitações\n~375 colunas (1 por campo/etapa)\n\nConsolidação via **bfill horizontal**\nStrip sufixo `|N` de colunas","x":400,"y":0,"width":360,"height":220},
+		{"id":"a0b1c2d3e4f50022","type":"text","text":"## silver_obras_etapas.parquet\n\n~84.000 etapas\n1 linha por etapa por OS\n\nColunas: `seqFluxo` · `etapa`\n`dataEtapaInicio` · `dataEtapaFim`\n`executor` · `status`","x":400,"y":260,"width":360,"height":220},
+		{"id":"a0b1c2d3e4f50030","type":"text","text":"## ⚠️ PMS_AuxiliarPDR.xlsx — R1\n`/Files/acto/PMS_AuxiliarPDR.xlsx`\n\n**Zona_Bairros:** 122 bairros → Z1/Z2/Z3\n**Etapas:** 185 etapas → setor + PDR\n\nPonto único de falha — sem backup\nMigração para Delta Table prevista","x":380,"y":560,"width":400,"height":200,"color":"2"},
+		{"id":"a0b1c2d3e4f50041","type":"text","text":"## gold_pdr_acompanhamentos_os\n**~10.300 OS · Tabela mestre**\n\n• `bairro_consolidado` · `zona` (Z1/Z2/Z3)\n• `etapa_atual` · `executor_atual`\n• `aux_setor_responsavel`\n• `flag_multiplas_etapas`\n\nModo: **overwrite**","x":880,"y":0,"width":400,"height":220},
+		{"id":"a0b1c2d3e4f50060","type":"file","file":"Documentação_Fabric/paineis_negocio/f5_obras_paineis_funcionamento.md","x":-60,"y":840,"width":2040,"height":60},
+		{"id":"a0b1c2d3e4f50042","type":"text","text":"## gold_obras_tempo_etapa\n**~71.500 etapas**\n\n1 linha por etapa por OS\n• `duracao_dias_preciso` (float)\n• `duracao_dias_int`\n• `aux_setor_responsavel` (94%)\n• `aux_pdr` (~10%)\n\nModo: **overwrite**","x":880,"y":260,"width":400,"height":220},
+		{"id":"a0b1c2d3e4f50043","type":"text","text":"## gold_obras_seont_os\n**~263 OS (subset SEONT)**\n\nFiltra: SEONT / SEONT-Chefia / SEONT-Chefia D.O\n• `analista_responsavel` (4,4%)\n• `executor_responsavel` (regra)\n• `flag_etapa_aprov` (28 variantes)\n\n**Lê de:** `gold_pdr_acompanhamentos_os`\nModo: **overwrite**","x":880,"y":520,"width":400,"height":240},
+		{"id":"a0b1c2d3e4f50051","type":"text","text":"## 📊 Acomp. Solicitações — Obras\n**Foco:** Volume + prazo por zona territorial\n**Abas:** Ordens em Aberto · Finalizadas · Base\n**KPIs:** % SLA · OS por zona Z1/Z2/Z3","x":1420,"y":0,"width":520,"height":160},
+		{"id":"a0b1c2d3e4f50052","type":"text","text":"## 📊 Acomp. Solicitações — SEMAN\n**Foco:** Licenciamentos ambientais (LP/LI/LO/MTA)\n**Abas:** Ordens em Aberto · Finalizadas · Base\n⚠️ Sigla SEMAM/SEMAN — confirmar","x":1420,"y":200,"width":520,"height":160},
+		{"id":"a0b1c2d3e4f50053","type":"text","text":"## 📊 PDR I — Produtividade\n**Foco:** Desempenho por executor e setor\n**Abas:** Tabela de OS · Resumo por Setor\n**KPIs:** Duração média (dias) · Total etapas · Ranking executor","x":1420,"y":400,"width":520,"height":180},
+		{"id":"a0b1c2d3e4f50054","type":"text","text":"## 📊 SEONT — Analistas por Zona\n**Foco:** Carga individual dos analistas técnicos\n**Abas:** Analistas por Zona · Tabela\n**KPIs:** OS > 30 Dias · OS > 60 Dias · Máx. Dias","x":1420,"y":620,"width":520,"height":160}
+	],
+	"edges":[
+		{"id":"e0b1c2d3e4f50001","fromNode":"a0b1c2d3e4f50010","fromSide":"right","toNode":"a0b1c2d3e4f50021","toSide":"left","label":"solicitações"},
+		{"id":"e0b1c2d3e4f50002","fromNode":"a0b1c2d3e4f50010","fromSide":"right","toNode":"a0b1c2d3e4f50022","toSide":"left","label":"etapas"},
+		{"id":"e0b1c2d3e4f50003","fromNode":"a0b1c2d3e4f50021","fromSide":"right","toNode":"a0b1c2d3e4f50041","toSide":"left"},
+		{"id":"e0b1c2d3e4f50004","fromNode":"a0b1c2d3e4f50022","fromSide":"right","toNode":"a0b1c2d3e4f50041","toSide":"left"},
+		{"id":"e0b1c2d3e4f50005","fromNode":"a0b1c2d3e4f50022","fromSide":"right","toNode":"a0b1c2d3e4f50042","toSide":"left"},
+		{"id":"e0b1c2d3e4f50006","fromNode":"a0b1c2d3e4f50030","fromSide":"right","toNode":"a0b1c2d3e4f50041","toSide":"bottom","color":"2","label":"join bairro+etapa"},
+		{"id":"e0b1c2d3e4f50007","fromNode":"a0b1c2d3e4f50030","fromSide":"right","toNode":"a0b1c2d3e4f50042","toSide":"bottom","color":"2","label":"join etapa→setor"},
+		{"id":"e0b1c2d3e4f50008","fromNode":"a0b1c2d3e4f50041","fromSide":"bottom","toNode":"a0b1c2d3e4f50043","toSide":"top","label":"filtra SEONT"},
+		{"id":"e0b1c2d3e4f50009","fromNode":"a0b1c2d3e4f50041","fromSide":"right","toNode":"a0b1c2d3e4f50051","toSide":"left"},
+		{"id":"e0b1c2d3e4f50010","fromNode":"a0b1c2d3e4f50041","fromSide":"right","toNode":"a0b1c2d3e4f50052","toSide":"left"},
+		{"id":"e0b1c2d3e4f50011","fromNode":"a0b1c2d3e4f50042","fromSide":"right","toNode":"a0b1c2d3e4f50053","toSide":"left"},
+		{"id":"e0b1c2d3e4f50012","fromNode":"a0b1c2d3e4f50043","fromSide":"right","toNode":"a0b1c2d3e4f50054","toSide":"left"}
+	]
+}

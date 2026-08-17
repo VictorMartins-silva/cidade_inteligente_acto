@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Principal em Power BI / Fabric — Guia de Autenticação</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --bg-card: #131a2b;
+    --bg-card-alt: #17203570;
+    --border: #232d45;
+    --text: #e6eaf5;
+    --text-dim: #9aa5c0;
+    --accent: #4f7cff;
+    --accent-2: #22d3b8;
+    --warn: #f5a524;
+    --danger: #f5556b;
+    --good: #2fd47d;
+    --radius: 14px;
+    --shadow: 0 10px 30px rgba(0,0,0,0.35);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: radial-gradient(1200px 600px at 10% -10%, #16223f 0%, var(--bg) 55%),
+                radial-gradient(900px 500px at 100% 0%, #10233a 0%, var(--bg) 60%),
+                var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px 100px; }
+
+  /* HERO */
+  header.hero {
+    padding: 72px 24px 48px;
+    text-align: center;
+    position: relative;
+  }
+  .eyebrow {
+    display: inline-block;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    background: rgba(34,211,184,0.1);
+    border: 1px solid rgba(34,211,184,0.3);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  h1 {
+    font-size: clamp(28px, 4vw, 44px);
+    margin: 0 0 16px;
+    background: linear-gradient(90deg, #fff, #b9c6ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .subtitle {
+    max-width: 680px;
+    margin: 0 auto;
+    color: var(--text-dim);
+    font-size: 17px;
+  }
+
+  /* NAV */
+  nav.toc {
+    max-width: 980px;
+    margin: 0 auto 40px;
+    padding: 18px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  nav.toc a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13.5px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card-alt);
+    transition: all .2s ease;
+    white-space: nowrap;
+  }
+  nav.toc a:hover { color: var(--text); border-color: var(--accent); background: rgba(79,124,255,0.1); }
+
+  section { margin: 64px 0; }
+  .section-head { margin-bottom: 28px; }
+  .kicker {
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-size: clamp(22px, 3vw, 30px);
+    margin: 0 0 8px;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+  }
+  h3 { font-size: 18px; margin: 28px 0 10px; color: #fff; font-weight: 650; }
+  p { color: var(--text-dim); margin: 0 0 14px; }
+  strong { color: var(--text); }
+  code {
+    background: #0e1526;
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-family: 'Cascadia Code', Consolas, monospace;
+    font-size: 0.9em;
+    color: #9fd6ff;
+  }
+  a.inline-link { color: var(--accent-2); }
+
+  /* CARD */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 26px 28px;
+    box-shadow: var(--shadow);
+  }
+
+  /* GRID DE CONCEITO */
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 28px 0;
+  }
+  .flow .node {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    text-align: center;
+    min-width: 140px;
+  }
+  .flow .node .n-title { color: #fff; font-weight: 650; display:block; margin-bottom:4px;}
+  .flow .node .n-sub { color: var(--text-dim); font-size: 12px; }
+  .flow .arrow { color: var(--accent); font-size: 20px; }
+
+  /* TABELA COMPARATIVA */
+  .table-scroll { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; background: var(--bg-card); }
+  th, td { text-align: left; padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: #0e1526; color: #fff; font-weight: 650; text-transform: uppercase; font-size: 11.5px; letter-spacing: .06em; }
+  tr:last-child td { border-bottom: none; }
+  td { color: var(--text-dim); }
+  td strong { color: var(--text); }
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+  .pill.rec { background: rgba(47,212,125,0.15); color: var(--good); border: 1px solid rgba(47,212,125,0.35); }
+  .pill.no { background: rgba(245,85,107,0.15); color: var(--danger); border: 1px solid rgba(245,85,107,0.35); }
+  .pill.mid { background: rgba(245,165,36,0.15); color: var(--warn); border: 1px solid rgba(245,165,36,0.35); }
+
+  /* PROS CONS */
+  .proscons { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px;}
+  @media (max-width: 720px) { .proscons { grid-template-columns: 1fr; } }
+  .pc-box { border-radius: var(--radius); padding: 20px 22px; border: 1px solid var(--border); }
+  .pc-box.pro { background: rgba(47,212,125,0.06); border-color: rgba(47,212,125,0.25); }
+  .pc-box.con { background: rgba(245,85,107,0.06); border-color: rgba(245,85,107,0.25); }
+  .pc-box h4 { margin: 0 0 12px; font-size: 14px; text-transform: uppercase; letter-spacing: .05em; }
+  .pc-box.pro h4 { color: var(--good); }
+  .pc-box.con h4 { color: var(--danger); }
+  .pc-box ul { margin: 0; padding-left: 20px; color: var(--text-dim); font-size: 14px; }
+  .pc-box li { margin-bottom: 8px; }
+
+  /* CARD GRID (tipos de auth) */
+  .cardgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 20px; }
+  .authcard {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: transform .2s ease, border-color .2s ease;
+  }
+  .authcard:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .authcard .icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(79,124,255,0.15); color: var(--accent);
+    font-weight: 800; font-size: 16px; margin-bottom: 12px;
+  }
+  .authcard h4 { margin: 0 0 6px; font-size: 15.5px; color: #fff; }
+  .authcard p { font-size: 13px; margin-bottom: 8px; }
+  .authcard .tag { font-size: 11px; color: var(--text-dim); }
+
+  /* STEPS */
+  .steps { counter-reset: step; margin-top: 24px; }
+  .step {
+    position: relative;
+    padding: 22px 24px 22px 64px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+  }
+  .step::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 18px; top: 22px;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #061020;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .step h4 { margin: 0 0 8px; font-size: 16px; color: #fff; }
+  .step p { margin-bottom: 8px; }
+  .step ul { margin: 8px 0 0; padding-left: 20px; color: var(--text-dim); font-size: 14px; }
+  .step li { margin-bottom: 6px; }
+  .step .who {
+    display: inline-block;
+    font-size: 11.5px;
+    color: var(--accent-2);
+    background: rgba(34,211,184,0.1);
+    border: 1px solid rgba(34,211,184,0.25);
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+
+  /* CALLOUTS */
+  .callout {
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 20px 0;
+    border-left: 4px solid var(--accent);
+    background: rgba(79,124,255,0.07);
+  }
+  .callout.warn { border-left-color: var(--warn); background: rgba(245,165,36,0.08); }
+  .callout.danger { border-left-color: var(--danger); background: rgba(245,85,107,0.08); }
+  .callout strong { display: block; margin-bottom: 4px; color: #fff; font-size: 13.5px; text-transform: uppercase; letter-spacing: .03em;}
+  .callout p { margin: 0; font-size: 14px; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; margin: 0; padding: 0; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0; border-bottom: 1px dashed var(--border);
+    color: var(--text-dim); font-size: 14.5px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .box {
+    flex-shrink: 0; width: 20px; height: 20px; border-radius: 5px;
+    border: 2px solid var(--accent); margin-top: 2px;
+  }
+
+  /* REFERENCES */
+  .refs { display: grid; gap: 10px; margin-top: 16px; }
+  .refs a {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    transition: border-color .2s ease;
+  }
+  .refs a:hover { border-color: var(--accent); }
+  .refs a .arrow-ico { color: var(--accent-2); font-size: 16px; }
+
+  footer {
+    text-align: center;
+    padding: 40px 24px;
+    color: var(--text-dim);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="eyebrow">Guia técnico · Microsoft Fabric &amp; Power BI</span>
+  <h1>Autenticação com Service Principal<br>em Modelos Semânticos</h1>
+  <p class="subtitle">Por que trocar credenciais de OAuth pessoal por um Service Principal, como funciona cada método de autenticação, e o passo a passo para migrar as conexões do ambiente <strong>Acto Cidade Inteligente</strong> no Microsoft Fabric.</p>
+</header>
+
+<nav class="toc">
+  <a href="#conceito">O problema</a>
+  <a href="#tipos">Tipos de autenticação</a>
+  <a href="#comparativo">Comparativo</a>
+  <a href="#proscons">Prós e contras do SP</a>
+  <a href="#processo">Processo de migração</a>
+  <a href="#checklist">Checklist</a>
+  <a href="#referencias">Fontes oficiais</a>
+</nav>
+
+<div class="wrap">
+
+  <section id="conceito">
+    <div class="section-head">
+      <div class="kicker">01 · O Problema</div>
+      <h2>Por que a credencial pessoal quebra os modelos</h2>
+      <p>Hoje, cada modelo semântico do workspace está configurado com uma <strong>conta de usuário pessoal (OAuth 2.0)</strong> como credencial da fonte de dados. Isso funciona no dia a dia, mas cria uma dependência frágil e invisível.</p>
+    </div>
+
+    <div class="card">
+      <p>Quando um modelo semântico precisa atualizar os dados no serviço do Power BI, ele usa a credencial salva para se autenticar na fonte (no nosso caso, o SQL Endpoint do Lakehouse no Fabric). Se essa credencial é uma conta pessoal:</p>
+      <div class="flow">
+        <div class="node"><span class="n-title">Senha expira</span><span class="n-sub">ou MFA muda</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><span class="n-title">Token inválido</span><span class="n-sub">refresh falha</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><span class="n-title">Erro no serviço</span><span class="n-sub">"artefato sem detalhes de conexão"</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><span class="n-title">Painel quebrado</span><span class="n-sub">para todos os usuários</span></div>
+      </div>
+      <p>Esse é exatamente o padrão do erro <code>DMTS_EntityNotFoundOrUnauthorized</code> visto nos modelos de Santos e Osasco — e confirmado como um problema <strong>generalizado</strong> em todos os modelos semânticos do ambiente, não um caso isolado.</p>
+      <div class="callout danger">
+        <strong>Risco adicional</strong>
+        <p>Se a pessoa dona da credencial sair da empresa, tiver o acesso revogado ou simplesmente trocar de senha sem avisar, todos os modelos que dependem dela param de atualizar ao mesmo tempo — sem aviso prévio até o próximo refresh agendado falhar.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="tipos">
+    <div class="section-head">
+      <div class="kicker">02 · Fundamentos</div>
+      <h2>Tipos de autenticação disponíveis no Fabric</h2>
+      <p>Ao configurar uma conexão de dados no Power BI/Fabric (seja no gateway, seja em uma conexão de nuvem), estes são os métodos de autenticação suportados. Nem todos se aplicam a toda fonte — para o SQL Analytics Endpoint de um Lakehouse, os relevantes são <strong>OAuth2</strong> e <strong>Service Principal</strong>.</p>
+    </div>
+
+    <div class="cardgrid">
+      <div class="authcard">
+        <div class="icon">👤</div>
+        <h4>OAuth 2.0 (conta pessoal)</h4>
+        <p>Usa a identidade Microsoft Entra ID de um usuário real, com login interativo (Organizational Account).</p>
+        <span class="tag">Situação atual do ambiente</span>
+      </div>
+      <div class="authcard">
+        <div class="icon">🤖</div>
+        <h4>Service Principal</h4>
+        <p>Identidade não humana (app registration no Entra ID), autenticada via Client ID + Tenant ID + Client Secret/certificado.</p>
+        <span class="tag">Recomendado para produção</span>
+      </div>
+      <div class="authcard">
+        <div class="icon">🪟</div>
+        <h4>Windows</h4>
+        <p>Usa credenciais de domínio Windows. Aplicável principalmente a fontes on-premises via gateway.</p>
+        <span class="tag">Não se aplica ao Fabric</span>
+      </div>
+      <div class="authcard">
+        <div class="icon">🔑</div>
+        <h4>Basic (usuário/senha)</h4>
+        <p>Usuário e senha simples do próprio banco de dados. Comum em SQL Server on-premises, IBM DB2, MySQL etc.</p>
+        <span class="tag">Não suportado por SQL Endpoint Fabric</span>
+      </div>
+      <div class="authcard">
+        <div class="icon">🗝️</div>
+        <h4>Key (chave de API)</h4>
+        <p>Uma chave/token estático fornecido pela fonte, sem envolver identidade de usuário.</p>
+        <span class="tag">Usado em Azure Table Storage, APIs</span>
+      </div>
+      <div class="authcard">
+        <div class="icon">🌐</div>
+        <h4>Anonymous</h4>
+        <p>Sem autenticação — a fonte é pública ou não exige credenciais.</p>
+        <span class="tag">Não aplicável a dados corporativos</span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Sobre Direct Lake</strong>
+      <p>Segundo a documentação oficial de segurança do Direct Lake, apenas <strong>OAuth 2.0</strong>, <strong>Service Principal</strong> e <strong>Workspace Identity</strong> são suportados como método de autenticação — chave ou SAS aparecem na interface mas não funcionam para esse modo de conexão.</p>
+    </div>
+  </section>
+
+  <section id="comparativo">
+    <div class="section-head">
+      <div class="kicker">03 · Comparação direta</div>
+      <h2>OAuth pessoal vs. Service Principal</h2>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Critério</th>
+            <th>OAuth 2.0 pessoal</th>
+            <th>Service Principal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Estabilidade do token</strong></td>
+            <td>Expira, exige reautenticação; qualquer bloqueio de MFA ou política de senha derruba a conexão. <span class="pill no">Frágil</span></td>
+            <td>Renovado automaticamente via <em>client credentials flow</em>; segredo válido por período definido (ex: 6, 12, 24 meses). <span class="pill rec">Estável</span></td>
+          </tr>
+          <tr>
+            <td><strong>Dependência de pessoa</strong></td>
+            <td>Atrelado a um funcionário específico — sai da empresa, muda de time ou perde acesso, o modelo quebra. <span class="pill no">Alto risco</span></td>
+            <td>Identidade da aplicação, independente de qualquer colaborador. <span class="pill rec">Sem dependência humana</span></td>
+          </tr>
+          <tr>
+            <td><strong>Reuso entre modelos</strong></td>
+            <td>Cada modelo geralmente fica com a conta de quem publicou por último. <span class="pill mid">Fragmentado</span></td>
+            <td>Uma única conexão de nuvem pode ser compartilhada por todos os modelos do workspace. <span class="pill rec">Centralizado</span></td>
+          </tr>
+          <tr>
+            <td><strong>Auditoria e governança</strong></td>
+            <td>Difícil rastrear "de quem é essa credencial" meses depois. <span class="pill no">Opaco</span></td>
+            <td>Identidade nomeada e documentada no Entra ID, com escopo de permissão explícito. <span class="pill rec">Rastreável</span></td>
+          </tr>
+          <tr>
+            <td><strong>Automação (CI/CD)</strong></td>
+            <td>Não recomendado — exige login interativo. <span class="pill no">Manual</span></td>
+            <td>Padrão recomendado pela Microsoft para pipelines, scripts e deploys automatizados. <span class="pill rec">Nativo</span></td>
+          </tr>
+          <tr>
+            <td><strong>Configuração inicial</strong></td>
+            <td>Simples — só fazer login. <span class="pill rec">Rápido</span></td>
+            <td>Exige criar App Registration, habilitar tenant setting, dar acesso a workspace e fontes. <span class="pill mid">Mais trabalho no início</span></td>
+          </tr>
+          <tr>
+            <td><strong>Row-Level Security (RLS/OLS)</strong></td>
+            <td>Suporta normalmente. <span class="pill rec">OK</span></td>
+            <td>Service Principals <strong>não</strong> podem ser usados como membros de role de RLS/OLS. <span class="pill mid">Limitação conhecida</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="proscons">
+    <div class="section-head">
+      <div class="kicker">04 · Balanço</div>
+      <h2>Vantagens e desvantagens do Service Principal</h2>
+    </div>
+
+    <div class="proscons">
+      <div class="pc-box pro">
+        <h4>✔ Vantagens</h4>
+        <ul>
+          <li>Elimina a causa raiz do erro recorrente de "artefato sem detalhes de conexão" causado por troca/expiração de senha pessoal.</li>
+          <li>Uma única conexão compartilhada pode alimentar <strong>todos</strong> os modelos semânticos do workspace — corrige o problema uma vez, não modelo a modelo.</li>
+          <li>Segue a prática recomendada oficial da Microsoft para cenários de CI/CD e reuso de conexão entre ambientes (Dev/Test/Prod).</li>
+          <li>Permissões de acesso à fonte ficam explícitas e documentadas (App Registration nomeado), facilitando auditoria.</li>
+          <li>Não depende de nenhum colaborador específico continuar na empresa ou manter a mesma senha.</li>
+        </ul>
+      </div>
+      <div class="pc-box con">
+        <h4>✘ Desvantagens / Cuidados</h4>
+        <ul>
+          <li>Exige acesso ao Entra ID (Azure AD) para criar/gerenciar o App Registration — normalmente depende de um administrador.</li>
+          <li>O <strong>client secret expira</strong> (recomendação: renovar a cada 30 dias segundo boas práticas do Fabric Data Warehouse, ou usar certificado/credencial federada para evitar rotação manual).</li>
+          <li>Precisa que o tenant admin habilite <em>"Service principals can call Fabric public APIs"</em> — é uma configuração de todo o tenant, então deve ser feita com cuidado (idealmente restrita a um grupo de segurança específico).</li>
+          <li>Não suporta Row-Level Security/Object-Level Security como identidade de usuário.</li>
+          <li>Setup inicial tem mais passos que simplesmente "fazer login".</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="processo">
+    <div class="section-head">
+      <div class="kicker">05 · Passo a passo</div>
+      <h2>Processo de migração para o nosso ambiente</h2>
+      <p>Sequência recomendada para o workspace <strong>Acto Cidade Inteligente</strong>, reaproveitando o Service Principal já usado na migração de Osasco/Santos.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <span class="who">Entra ID admin</span>
+        <h4>Confirmar ou criar o Service Principal</h4>
+        <p>Verificar se <code>PowerBIDatasets_acto_svc</code> já existe em <strong>Entra ID → App registrations</strong>. Se sim, coletar:</p>
+        <ul>
+          <li><strong>Application (client) ID</strong></li>
+          <li><strong>Directory (tenant) ID</strong></li>
+          <li><strong>Client secret</strong> válido (gerar um novo em "Certificates &amp; secrets" se estiver expirado ou perdido)</li>
+        </ul>
+        <p>Se não existir, criar um novo App Registration com "Accounts in this organizational directory only".</p>
+      </div>
+
+      <div class="step">
+        <span class="who">Fabric tenant admin</span>
+        <h4>Habilitar Service Principals no tenant</h4>
+        <p>No <strong>Admin Portal do Fabric → Configurações do tenant → Developer settings</strong>, habilitar <em>"Service principals can call Fabric public APIs"</em>, preferencialmente restringindo a um <strong>grupo de segurança específico</strong> (recomendado pela Microsoft) em vez de liberar para toda a organização.</p>
+      </div>
+
+      <div class="step">
+        <span class="who">Admin do workspace</span>
+        <h4>Dar acesso do SP ao workspace</h4>
+        <p>No workspace (<code>bis_obras_producao</code> e demais afetados) → <strong>Gerenciar acesso → Adicionar pessoas ou grupos</strong> → buscar pelo nome do App Registration → atribuir papel <strong>Membro</strong> ou <strong>Contribuidor</strong>.</p>
+      </div>
+
+      <div class="step">
+        <span class="who">Admin do Lakehouse</span>
+        <h4>Conceder acesso de leitura aos dados</h4>
+        <p>No Lakehouse de origem (<code>lh_solicitacoes_acto</code>, <code>lh_cidade_inteligente_osasco</code>, etc.) → conceder ao SP no mínimo:</p>
+        <ul>
+          <li><strong>Read</strong> — acesso ao artefato</li>
+          <li><strong>Read all data using SQL (ReadData)</strong> — necessário para consultas via SQL Endpoint</li>
+        </ul>
+      </div>
+
+      <div class="step">
+        <span class="who">Você / qualquer membro com acesso</span>
+        <h4>Criar a conexão de nuvem compartilhada</h4>
+        <p>Em <strong>Configurações (engrenagem) → Gerenciar conexões e gateways → Novo → Cloud</strong>:</p>
+        <ul>
+          <li>Tipo de conexão: <strong>SQL Server</strong> (ou "Power BI Semantic Model", conforme o caso)</li>
+          <li>Servidor: o SQL Analytics Endpoint do Lakehouse</li>
+          <li>Método de autenticação: <strong>Service Principal</strong></li>
+          <li>Preencher Tenant ID, Service Principal ID (client ID) e Service Principal Key (client secret)</li>
+        </ul>
+        <p>Nomear de forma clara, por exemplo <code>conn_sp_acto_svc_lh_solicitacoes</code>, e garantir que o workspace/usuários certos tenham permissão de uso dessa conexão.</p>
+      </div>
+
+      <div class="step">
+        <span class="who">Você</span>
+        <h4>Remapear cada modelo semântico</h4>
+        <p>Para cada modelo afetado: <strong>Configurações do modelo → Conexões de gateway e nuvem</strong> → trocar o mapeamento da conexão pessoal atual pela nova conexão com Service Principal → <strong>Aplicar</strong> → rodar refresh manual para validar.</p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <strong>Atenção ao expirar</strong>
+      <p>Documente a data de expiração do client secret e agende sua renovação com antecedência — um secret expirado gera exatamente o mesmo tipo de falha que estamos corrigindo agora, só que em todos os modelos migrados de uma vez.</p>
+    </div>
+  </section>
+
+  <section id="checklist">
+    <div class="section-head">
+      <div class="kicker">06 · Acompanhamento</div>
+      <h2>Checklist de migração</h2>
+    </div>
+    <div class="card">
+      <ul class="checklist">
+        <li><span class="box"></span> Service Principal <code>PowerBIDatasets_acto_svc</code> confirmado, com Client ID / Tenant ID / Secret válidos em mãos</li>
+        <li><span class="box"></span> "Service principals can call Fabric public APIs" habilitado no tenant (restrito a grupo de segurança)</li>
+        <li><span class="box"></span> SP adicionado como Membro/Contribuidor nos workspaces relevantes</li>
+        <li><span class="box"></span> SP com permissão de leitura (Read + ReadData) em cada Lakehouse de origem</li>
+        <li><span class="box"></span> Conexão de nuvem compartilhada criada com autenticação Service Principal</li>
+        <li><span class="box"></span> Modelo <code>pbi_obras_santos_seont_acomp_analistas</code> remapeado e testado (piloto)</li>
+        <li><span class="box"></span> Demais modelos do workspace remapeados um a um</li>
+        <li><span class="box"></span> Data de expiração do client secret documentada e lembrete de renovação criado</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="referencias">
+    <div class="section-head">
+      <div class="kicker">07 · Leitura oficial</div>
+      <h2>Fontes na documentação da Microsoft</h2>
+    </div>
+    <div class="refs">
+      <a href="https://learn.microsoft.com/fabric/enterprise/powerbi/service-premium-service-principal" target="_blank" rel="noopener">
+        <span>Automate Premium workspace and semantic model tasks with service principals</span>
+        <span class="arrow-ico">→</span>
+      </a>
+      <a href="https://learn.microsoft.com/fabric/iq/plan/planning-how-to-create-semantic-model-connection" target="_blank" rel="noopener">
+        <span>Create and share a cloud connection for a semantic model</span>
+        <span class="arrow-ico">→</span>
+      </a>
+      <a href="https://learn.microsoft.com/fabric/admin/service-admin-portal-developer#service-principals-can-call-fabric-public-apis" target="_blank" rel="noopener">
+        <span>Habilitar "Service principals can call Fabric public APIs" (tenant settings)</span>
+        <span class="arrow-ico">→</span>
+      </a>
+      <a href="https://learn.microsoft.com/fabric/data-warehouse/service-principals" target="_blank" rel="noopener">
+        <span>Service principals in Microsoft Fabric — renovação de token, camadas de controle e dados</span>
+        <span class="arrow-ico">→</span>
+      </a>
+      <a href="https://learn.microsoft.com/fabric/fundamentals/direct-lake-security-integration" target="_blank" rel="noopener">
+        <span>Direct Lake security — métodos de autenticação e permissões suportadas</span>
+        <span class="arrow-ico">→</span>
+      </a>
+      <a href="https://learn.microsoft.com/fabric/data-engineering/troubleshoot-lakehouse#power-bi-integration-errors" target="_blank" rel="noopener">
+        <span>Troubleshoot Lakehouse issues — erros de autorização no refresh do Power BI</span>
+        <span class="arrow-ico">→</span>
+      </a>
+      <a href="https://learn.microsoft.com/entra/identity-platform/howto-create-service-principal-portal" target="_blank" rel="noopener">
+        <span>Como criar um Service Principal no Microsoft Entra ID</span>
+        <span class="arrow-ico">→</span>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Documento gerado para o time do projeto Acto Cidade Inteligente · Baseado na documentação oficial do Microsoft Fabric e Power BI (learn.microsoft.com)
+</footer>
+
+</body>
+</html>

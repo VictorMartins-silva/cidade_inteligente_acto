@@ -1,0 +1,30 @@
+{
+	"nodes":[
+		{"id":"a1b2c3d4e5f60012","type":"group","x":-1400,"y":310,"width":2500,"height":490,"color":"6","label":"Documentação Relacionada no Vault"},
+		{"id":"a1b2c3d4e5f60005","type":"group","x":-1400,"y":-40,"width":2500,"height":310,"color":"4","label":"Domínios — 111 Catálogos · 153+ Etapas"},
+		{"id":"a1b2c3d4e5f60004","type":"file","file":"Documentação_Fabric/plano_extracao_via_excel_santos.md","x":-170,"y":-700,"width":940,"height":540},
+		{"id":"a1b2c3d4e5f60003","type":"file","file":"Documentação_Fabric/codigos_catalogos_etapas_santos.md","x":-1400,"y":-700,"width":902,"height":540},
+		{"id":"a1b2c3d4e5f60017","type":"text","text":"## Fases\n\n**1.** Criar Excel\n**2.** `nb_utils_config_catalogos`\n**3.** OUVIDORIA → SEGOV → SEINFRA → CET\n**4.** Migrar SEPREF\n**5.** Resolver R5 (Obras / 401)\n**6.** → Delta Table","x":840,"y":-700,"width":260,"height":540,"color":"6"},
+		{"id":"a1b2c3d4e5f60013","type":"file","file":"Documentação_Fabric/codigos_catalogos_etapas_santos.md","x":-1360,"y":400,"width":520,"height":360},
+		{"id":"a1b2c3d4e5f60014","type":"file","file":"Documentação_Fabric/DOCUMENTACAO_CONSOLIDADA_FABRIC.md","x":-778,"y":400,"width":493,"height":360},
+		{"id":"a1b2c3d4e5f60016","type":"file","file":"Documentação_Fabric/Relatório Técnico_ Arquitetura, Mapeamento e Otimização - Microsoft Fabric.md","x":480,"y":400,"width":530,"height":360},
+		{"id":"a1b2c3d4e5f60015","type":"file","file":"Documentação_Fabric/roadmap_acto_fabric.md","x":-193,"y":400,"width":540,"height":360},
+		{"id":"a1b2c3d4e5f60011","type":"text","text":"## Ouvidoria\n1 catálogo\n3 etapas\n\n✅ Operacional\n\n→ `gold_manifestacoes_ouvidoria`","x":680,"y":-10,"width":360,"height":220,"color":"4"},
+		{"id":"a1b2c3d4e5f60010","type":"text","text":"## SEPREF\n49 catálogos\netapas via API\n\n✅ Operacional\n\n→ `gold_sepref_servicos`","x":314,"y":-10,"width":333,"height":220,"color":"3"},
+		{"id":"a1b2c3d4e5f60009","type":"text","text":"## SEINFRA\n6 catálogos\n24 etapas\n\n✅ Operacional\n\n→ `gold_seinfra_servicos`","x":-285,"y":-10,"width":325,"height":220,"color":"4"},
+		{"id":"a1b2c3d4e5f60006","type":"text","text":"## Obras\n26 catálogos\n88 etapas\n\n⚠️ **Parado**\nHTTP 401\n11/03/2025\n\n→ `gold_obras_*`","x":-1369,"y":-10,"width":269,"height":220,"color":"1"},
+		{"id":"a1b2c3d4e5f60007","type":"text","text":"## CET\n25 catálogos\n29 etapas\n\n✅ Operacional\n\n→ `gold_cet_servicos`","x":-949,"y":-10,"width":269,"height":220,"color":"4"},
+		{"id":"a1b2c3d4e5f60008","type":"text","text":"## SEGOV\n4 catálogos\n9 etapas\n\n✅ Operacional\n\n→ `gold_segov_servicos`","x":-636,"y":-10,"width":277,"height":220,"color":"4"},
+		{"id":"a1b2c3d4e5f60001","type":"text","text":"# Extração API Acto — Santos\nCentralização de códigos de catálogos e etapas por domínio","x":-534,"y":-1120,"width":498,"height":80,"color":"5"}
+	],
+	"edges":[
+		{"id":"b1c2d3e4f5a60001","fromNode":"a1b2c3d4e5f60001","fromSide":"bottom","toNode":"a1b2c3d4e5f60003","toSide":"top","label":"referência de códigos"},
+		{"id":"b1c2d3e4f5a60002","fromNode":"a1b2c3d4e5f60001","fromSide":"bottom","toNode":"a1b2c3d4e5f60004","toSide":"top","label":"plano de ação"},
+		{"id":"b1c2d3e4f5a60003","fromNode":"a1b2c3d4e5f60003","fromSide":"right","toNode":"a1b2c3d4e5f60004","toSide":"left","fromEnd":"arrow","label":"alimenta"},
+		{"id":"b1c2d3e4f5a60008","fromNode":"a1b2c3d4e5f60004","fromSide":"right","toNode":"a1b2c3d4e5f60017","toSide":"left"},
+		{"id":"b1c2d3e4f5a60004","fromNode":"a1b2c3d4e5f60003","fromSide":"bottom","toNode":"a1b2c3d4e5f60005","toSide":"top"},
+		{"id":"b1c2d3e4f5a60005","fromNode":"a1b2c3d4e5f60004","fromSide":"bottom","toNode":"a1b2c3d4e5f60005","toSide":"top","label":"migrar por fases"},
+		{"id":"b1c2d3e4f5a60006","fromNode":"a1b2c3d4e5f60003","fromSide":"bottom","toNode":"a1b2c3d4e5f60013","toSide":"top"},
+		{"id":"b1c2d3e4f5a60007","fromNode":"a1b2c3d4e5f60004","fromSide":"bottom","toNode":"a1b2c3d4e5f60015","toSide":"top","label":"alinha com"}
+	]
+}

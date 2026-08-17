@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Análise comparativa — Base dos Dados x Lakehouse Eicon</title>
+  <style>
+    :root {
+      --ink: #172026;
+      --muted: #5b6770;
+      --paper: #f7f3eb;
+      --panel: #fffdf8;
+      --line: #ddd3c4;
+      --forest: #115c53;
+      --forest-2: #0b403a;
+      --copper: #b76434;
+      --gold: #d6a73f;
+      --blue: #2f6f9f;
+      --red: #b5473c;
+      --green: #28785d;
+      --shadow: 0 18px 55px rgba(38, 28, 18, .12);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(17, 92, 83, .07) 0 22%, transparent 22% 100%),
+        repeating-linear-gradient(90deg, rgba(23, 32, 38, .025) 0 1px, transparent 1px 44px),
+        var(--paper);
+      line-height: 1.55;
+    }
+
+    a { color: var(--forest); }
+    .page { max-width: 1180px; margin: 0 auto; padding: 34px 22px 72px; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 28px;
+      align-items: end;
+      min-height: 420px;
+      padding: 42px;
+      color: #fff;
+      background:
+        linear-gradient(125deg, rgba(11, 64, 58, .96), rgba(17, 92, 83, .88)),
+        radial-gradient(circle at 85% 15%, rgba(214, 167, 63, .45), transparent 35%);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -8% -18% 38%;
+      height: 230px;
+      border: 1px solid rgba(255, 255, 255, .18);
+      transform: rotate(-6deg);
+    }
+    .eyebrow {
+      display: inline-block;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: #f4d991;
+      margin-bottom: 18px;
+    }
+    h1, h2, h3 { line-height: 1.08; margin: 0; }
+    h1 { font-size: clamp(36px, 6vw, 76px); max-width: 840px; letter-spacing: 0; }
+    .hero p { font-size: 20px; color: rgba(255, 255, 255, .86); max-width: 760px; margin: 20px 0 0; }
+    .hero-card {
+      background: rgba(255, 253, 248, .1);
+      border: 1px solid rgba(255, 255, 255, .18);
+      border-radius: var(--radius);
+      padding: 22px;
+      backdrop-filter: blur(10px);
+      z-index: 1;
+    }
+    .hero-card strong { display: block; color: #fff; font-size: 32px; line-height: 1; }
+    .hero-card span { display: block; color: rgba(255,255,255,.75); margin-top: 6px; font-family: "Trebuchet MS", Verdana, sans-serif; font-size: 13px; }
+    .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+
+    .toc {
+      margin: 22px 0 34px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+    }
+    .toc a {
+      text-decoration: none;
+      color: var(--forest-2);
+      background: rgba(255, 253, 248, .75);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    section { margin-top: 34px; }
+    .section-title { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
+    h2 { font-size: clamp(28px, 3vw, 42px); color: var(--forest-2); }
+    .section-title p { margin: 0; max-width: 520px; color: var(--muted); font-family: "Trebuchet MS", Verdana, sans-serif; font-size: 14px; }
+
+    .grid { display: grid; gap: 16px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: 0 8px 24px rgba(38, 28, 18, .06);
+    }
+    .card h3 { font-size: 23px; color: var(--forest-2); margin-bottom: 10px; }
+    .card p { margin: 0; color: var(--muted); }
+    .metric { font-family: "Trebuchet MS", Verdana, sans-serif; }
+    .metric .num { display: block; font-size: 44px; font-weight: 800; color: var(--forest); line-height: 1; }
+    .metric .label { color: var(--muted); font-size: 13px; margin-top: 8px; display: block; }
+
+    .callout {
+      border-left: 5px solid var(--copper);
+      background: #fff8ea;
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      color: #4c3a28;
+    }
+    .callout strong { color: #7c3d20; }
+
+    table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    th, td { padding: 13px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { text-align: left; color: var(--forest-2); background: #efe6d7; font-family: "Trebuchet MS", Verdana, sans-serif; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+    tr:last-child td { border-bottom: 0; }
+    td { font-size: 15px; }
+
+    .tag {
+      display: inline-block;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-size: 12px;
+      border-radius: 999px;
+      padding: 4px 9px;
+      margin: 2px 4px 2px 0;
+      background: #e8efe9;
+      color: var(--forest-2);
+      border: 1px solid #cbded4;
+      white-space: nowrap;
+    }
+    .tag.warn { background: #fff1cf; color: #7b5511; border-color: #e9ce87; }
+    .tag.risk { background: #fde5df; color: #823127; border-color: #edb5a9; }
+    .tag.info { background: #e6f0f5; color: #244f6f; border-color: #bdd4e2; }
+
+    .score { height: 10px; background: #eadfce; border-radius: 999px; overflow: hidden; margin-top: 9px; }
+    .score span { display: block; height: 100%; background: linear-gradient(90deg, var(--copper), var(--gold), var(--green)); border-radius: inherit; }
+    .bar-row { margin: 14px 0; font-family: "Trebuchet MS", Verdana, sans-serif; }
+    .bar-label { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--muted); }
+
+    .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .step { position: relative; padding-top: 20px; }
+    .step::before { content: ""; position: absolute; top: 0; left: 0; width: 38px; height: 4px; background: var(--copper); border-radius: 999px; }
+    .step h3 { font-size: 20px; }
+    ul { margin: 10px 0 0 18px; padding: 0; }
+    li { margin: 6px 0; }
+    .small { font-family: "Trebuchet MS", Verdana, sans-serif; font-size: 13px; color: var(--muted); }
+    .footer { margin-top: 42px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-family: "Trebuchet MS", Verdana, sans-serif; font-size: 13px; }
+
+    @media (max-width: 900px) {
+      .hero, .grid.two, .grid.three, .grid.four, .timeline { grid-template-columns: 1fr; }
+      .hero { padding: 28px; min-height: auto; }
+      .section-title { display: block; }
+      .section-title p { margin-top: 8px; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <span class="eyebrow">Relatório técnico · 03/07/2026</span>
+        <h1>Base dos Dados como benchmark para o DataHub Municipal</h1>
+        <p>Leitura comparativa entre o clone do repositório de pipelines da Base dos Dados, o Lakehouse Eicon em Microsoft Fabric e o PRD do DataHub Municipal.</p>
+      </div>
+      <aside class="hero-card">
+        <span class="eyebrow">Tese executiva</span>
+        <p>O Lakehouse Eicon já está mais perto do runtime do produto. A Base dos Dados mostra como industrializar governança, catálogo, testes e onboarding de produtos de dados em escala nacional.</p>
+        <div class="hero-stats">
+          <div><strong>681</strong><span>modelos SQL dbt na Base dos Dados</span></div>
+          <div><strong>24</strong><span>pipelines Fabric no Lakehouse Eicon</span></div>
+          <div><strong>57</strong><span>reports Power BI no Lakehouse Eicon</span></div>
+          <div><strong>5</strong><span>etapas do roadmap DHM analisadas</span></div>
+        </div>
+      </aside>
+    </header>
+
+    <nav class="toc">
+      <a href="#sumario">Sumário</a>
+      <a href="#inventario">Inventário</a>
+      <a href="#comparativo">Comparativo</a>
+      <a href="#prd">Encaixe no PRD</a>
+      <a href="#oportunidades">O que aproveitar</a>
+      <a href="#roadmap">Roadmap</a>
+    </nav>
+
+    <section id="sumario">
+      <div class="section-title">
+        <h2>Sumário executivo</h2>
+        <p>Conclusão direta para decisão de produto e arquitetura.</p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>O que a Base dos Dados resolve bem</h3>
+          <p>Padronização nacional de tabelas públicas, publicação em BigQuery, dbt como camada de contrato, testes de qualidade, diretórios canônicos, macros reutilizáveis e um fluxo explícito de onboarding até metadados e PR.</p>
+        </div>
+        <div class="card">
+          <h3>O que o Lakehouse Eicon já tem de produto</h3>
+          <p>Arquitetura Microsoft Fabric com Bronze/Silver/Gold, lakehouses centralizados e municipais, integração com Power BI, semantic models por cliente, notebooks PySpark e pipelines de execução real para domínios municipais.</p>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:16px">
+        <strong>Leitura principal:</strong> não faz sentido copiar a stack da Base dos Dados para o DHM. O ganho está em importar seus padrões de produto de dados: contrato de schema, dicionário, qualidade automatizada, diretórios nacionais, metadata-driven onboarding e governança de publicação.
+      </div>
+    </section>
+
+    <section id="inventario">
+      <div class="section-title">
+        <h2>Inventário do que existe</h2>
+        <p>Contagem feita por análise estática dos diretórios informados.</p>
+      </div>
+      <div class="grid four">
+        <div class="card metric"><span class="num">134</span><span class="label">diretórios de datasets em models/ na Base dos Dados</span></div>
+        <div class="card metric"><span class="num">681</span><span class="label">arquivos SQL dbt</span></div>
+        <div class="card metric"><span class="num">122</span><span class="label">schema.yml com descrições e testes</span></div>
+        <div class="card metric"><span class="num">50</span><span class="label">flows Prefect encontrados</span></div>
+      </div>
+      <div class="grid four" style="margin-top:16px">
+        <div class="card metric"><span class="num">139</span><span class="label">pastas .Notebook no Lakehouse atual</span></div>
+        <div class="card metric"><span class="num">24</span><span class="label">Data Pipelines Fabric</span></div>
+        <div class="card metric"><span class="num">63</span><span class="label">Semantic Models</span></div>
+        <div class="card metric"><span class="num">6</span><span class="label">Lakehouses versionados</span></div>
+      </div>
+      <p class="small">Observação: a documentação interna do Lakehouse cita 147 notebooks; o inventário atual do filesystem retornou 139 pastas .Notebook. A diferença provavelmente reflete evolução recente do repositório ou critérios diferentes de contagem.</p>
+
+      <div class="grid two" style="margin-top:18px">
+        <div class="card">
+          <h3>Áreas mais relevantes na Base dos Dados para o DHM</h3>
+          <p><span class="tag">br_me_siconfi</span><span class="tag">br_ms_cnes</span><span class="tag">br_inep_censo_escolar</span><span class="tag">br_inep_saeb</span><span class="tag">br_tse_eleicoes</span><span class="tag">br_ibge_censo_2022</span><span class="tag">br_bd_diretorios_brasil</span><span class="tag">br_denatran_frota</span><span class="tag">br_cgu_beneficios_cidadao</span><span class="tag">br_cgu_orcamento_publico</span></p>
+          <p style="margin-top:12px">Esses domínios cobrem saúde, educação, finanças públicas, território, eleições, frota, benefícios sociais e diretórios. São insumos diretos para os produtos de dados municipais previstos no PRD.</p>
+        </div>
+        <div class="card">
+          <h3>Áreas mais relevantes no Lakehouse Eicon</h3>
+          <p><span class="tag info">Dados Públicos</span><span class="tag info">Acto</span><span class="tag info">Osasco</span><span class="tag info">Santos</span><span class="tag info">Mauá</span><span class="tag info">Aparecida de Goiânia</span><span class="tag info">SJRP</span><span class="tag info">Gier</span></p>
+          <p style="margin-top:12px">A estrutura está organizada por lakehouses centralizados, lakehouses municipais, notebooks Fabric, pipelines, reports e semantic models. Isso já materializa a distribuição e o BI do DHM.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="comparativo">
+      <div class="section-title">
+        <h2>Comparativo arquitetural</h2>
+        <p>Onde cada projeto é mais forte e qual papel deve assumir no roadmap.</p>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Dimensão</th><th>Base dos Dados</th><th>Lakehouse Eicon</th><th>Implicação para o DHM</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Stack principal</td>
+            <td>BigQuery, dbt, Python, Prefect, basedosdados SDK.</td>
+            <td>Microsoft Fabric, OneLake/Lakehouse, PySpark notebooks, Data Pipelines, Power BI.</td>
+            <td>Manter Fabric como runtime do produto Eicon; usar a Base dos Dados como benchmark de governança e modelagem.</td>
+          </tr>
+          <tr>
+            <td>Modelo de dados</td>
+            <td>Datasets públicos nacionais com schemas dbt, casts seguros, particionamento e documentação em schema.yml.</td>
+            <td>Medallion por domínio/município, com tabelas Delta e Gold consumidas por BI.</td>
+            <td>Criar contratos formais de produto no Lakehouse: schema, chaves, periodicidade, SLA, owner, testes e formas de consumo.</td>
+          </tr>
+          <tr>
+            <td>Qualidade</td>
+            <td>Testes dbt: unicidade, not_null, relações com diretórios, cobertura de dicionário, filtros de recência.</td>
+            <td>Monitoramento em construção, volumetria e status operacional; validação ainda menos padronizada por produto.</td>
+            <td>Levar o padrão de testes da Base dos Dados para o Fabric, com checks em notebooks, Great Expectations/Soda/dbt-fabric ou framework próprio.</td>
+          </tr>
+          <tr>
+            <td>Catálogo e metadados</td>
+            <td>Arquitetura de tabelas, metadados no backend, diretórios de referência e padrão de descrição.</td>
+            <td>Semantic models e documentação de repo, mas catálogo de produto ainda embrionário.</td>
+            <td>Definir um catálogo municipal com metadados versionados no Git e publicados no OneLake/Purview/portal.</td>
+          </tr>
+          <tr>
+            <td>Multi-tenant</td>
+            <td>Publicação pública e aberta; multi-tenant não é o problema central.</td>
+            <td>Separação clara entre dados públicos/ACTO centralizados e dados sensíveis municipais.</td>
+            <td>O desenho Eicon é mais adequado para prefeituras; precisa sair de copy-paste municipal para configuração metadata-driven.</td>
+          </tr>
+          <tr>
+            <td>Distribuição</td>
+            <td>BigQuery público, pacotes, site e metadados.</td>
+            <td>Power BI, semantic models, SQL Endpoint e Excel conectado via Fabric.</td>
+            <td>O Fabric atende melhor o princípio do PRD de entregar no formato conhecido do cliente municipal.</td>
+          </tr>
+          <tr>
+            <td>Operação</td>
+            <td>Esteira explícita: captura, limpeza, upload, dbt, validação, metadados, PR.</td>
+            <td>Pipelines Fabric executam fluxos reais, mas deploy/provisionamento ainda mais manual e acoplado.</td>
+            <td>Transformar onboarding em playbook automatizado: criar workspace, lakehouse, shortcuts, pipelines, semantic model e catálogo por configuração.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="prd">
+      <div class="section-title">
+        <h2>Encaixe com o PRD do DataHub Municipal</h2>
+        <p>Avaliação por etapa do roadmap do DHM.</p>
+      </div>
+      <div class="grid two">
+        <div class="card">
+          <h3>Etapas do PRD</h3>
+          <div class="bar-row"><div class="bar-label"><span>1. Plataforma</span><span>forte, mas artesanal</span></div><div class="score"><span style="width:76%"></span></div></div>
+          <div class="bar-row"><div class="bar-label"><span>2. Distribuição</span><span>forte via Fabric/Power BI</span></div><div class="score"><span style="width:82%"></span></div></div>
+          <div class="bar-row"><div class="bar-label"><span>3. Automação</span><span>parcial</span></div><div class="score"><span style="width:55%"></span></div></div>
+          <div class="bar-row"><div class="bar-label"><span>4. Serviços analíticos</span><span>inicial</span></div><div class="score"><span style="width:28%"></span></div></div>
+          <div class="bar-row"><div class="bar-label"><span>5. IA generativa</span><span>dependente de catálogo</span></div><div class="score"><span style="width:18%"></span></div></div>
+        </div>
+        <div class="card">
+          <h3>Diagnóstico</h3>
+          <p>O Lakehouse Eicon é um MVP real da Etapa 1 e parte da Etapa 2. O principal desencaixe não é arquitetural; é de industrialização. O PRD pede produtos de dados confiáveis, documentados e continuamente atualizados. Hoje há dados e dashboards, mas o contrato de produto ainda precisa ficar explícito, versionado e monitorado.</p>
+          <p style="margin-top:12px">A Base dos Dados mostra exatamente como amadurecer essa camada: schema como fonte de verdade, testes automatizados, diretórios canônicos e metadados de publicação.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="oportunidades">
+      <div class="section-title">
+        <h2>O que aproveitar da Base dos Dados</h2>
+        <p>Adaptações práticas para o Lakehouse Eicon.</p>
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <h3>1. Contrato de produto de dados</h3>
+          <p>Criar um arquivo de metadados por produto: colunas, tipos, descrições, chaves, partições, frequência, cobertura, owner, sensibilidade, SLA e formas de consumo. Esse contrato deve orientar notebook, Gold, semantic model e documentação.</p>
+        </div>
+        <div class="card">
+          <h3>2. Testes como parte da esteira</h3>
+          <p>Replicar o espírito dos testes dbt: not null para chaves, unicidade por grão, relacionamento com diretórios, recência e variação de volume. Resultado publicado em tabela de monitoramento.</p>
+        </div>
+        <div class="card">
+          <h3>3. Diretórios nacionais</h3>
+          <p>Promover tabelas como município, UF, tempo, CNAE, CBO, escola, estabelecimento CNES e órgãos públicos a dimensões oficiais do DHM. Isso reduz divergência entre domínios e melhora o uso por BI e IA.</p>
+        </div>
+        <div class="card">
+          <h3>4. Onboarding padronizado</h3>
+          <p>Transformar o fluxo da Base dos Dados em workflow Fabric: contexto, contrato, ingestão, Bronze, Silver, Gold, testes, catálogo, monitoramento, distribuição e PR.</p>
+        </div>
+        <div class="card">
+          <h3>5. Cobertura de fontes públicas</h3>
+          <p>Usar o catálogo da Base dos Dados para acelerar Saúde, Educação e Finanças: CNES/DATASUS, INEP, SICONFI/FINBRA, TSE, IBGE, frota e benefícios sociais.</p>
+        </div>
+        <div class="card">
+          <h3>6. Separação dev/prod</h3>
+          <p>A Base dos Dados explicita ambientes dev/prod e promoção com validação. No Fabric, isso deve virar workspaces ou stages separados com ALM, parametrização e aprovação antes de produção.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Gaps críticos do Lakehouse Eicon</h2>
+        <p>Riscos que travam a evolução de projeto para plataforma comercial.</p>
+      </div>
+      <table>
+        <thead><tr><th>Risco</th><th>Evidência observada</th><th>Ação recomendada</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="tag risk">Segurança</span></td>
+            <td>Há credenciais hardcoded em notebooks Fabric, inclusive em orquestração ACTO.</td>
+            <td>Migrar para Azure Key Vault/Fabric credentials, rotacionar credenciais expostas e adicionar scan de segredo no CI.</td>
+          </tr>
+          <tr>
+            <td><span class="tag warn">Escala multi-cliente</span></td>
+            <td>Configurações de fontes e municípios aparecem embutidas em notebooks e pipelines.</td>
+            <td>Criar tabelas de configuração por tenant/domínio e notebooks parametrizados; processar dados públicos uma vez para todos os municípios.</td>
+          </tr>
+          <tr>
+            <td><span class="tag warn">Contrato de dados</span></td>
+            <td>Gold e semantic models existem, mas ainda sem contrato formal equivalente ao schema.yml/arquitetura da Base dos Dados.</td>
+            <td>Adicionar contrato versionado por produto e gerar documentação/catálogo a partir dele.</td>
+          </tr>
+          <tr>
+            <td><span class="tag warn">Qualidade automatizada</span></td>
+            <td>Monitoramento existe em construção, mas não há suíte homogênea de testes por domínio.</td>
+            <td>Implantar checks mínimos por produto: grão, chaves, diretórios, frescor, volume e cobertura temporal.</td>
+          </tr>
+          <tr>
+            <td><span class="tag info">CI/CD</span></td>
+            <td>Integração Git/ALM existe, mas faltam workflows de lint, formato de notebook, testes e secrets.</td>
+            <td>Começar com gitleaks + validação de notebook-content.py + ruff/pytest para funções puras.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Domínios prioritários para o DHM</h2>
+        <p>Fontes públicas onde a Base dos Dados pode acelerar descoberta, modelagem e validação.</p>
+      </div>
+      <div class="grid three">
+        <div class="card">
+          <h3>Saúde</h3>
+          <p><span class="tag">CNES</span><span class="tag">SIM</span><span class="tag">SINASC</span><span class="tag">SIH/SUS</span><span class="tag">SIOPS</span></p>
+          <p style="margin-top:10px">Maior lacuna atual frente ao PRD. Alto valor para secretarias e modelos de demanda.</p>
+        </div>
+        <div class="card">
+          <h3>Educação</h3>
+          <p><span class="tag">Censo Escolar</span><span class="tag">IDEB</span><span class="tag">SAEB</span><span class="tag">FNDE</span><span class="tag">SIOPE</span></p>
+          <p style="margin-top:10px">Essencial para produtos municipais recorrentes e análises por escola/rede.</p>
+        </div>
+        <div class="card">
+          <h3>Finanças públicas</h3>
+          <p><span class="tag">SICONFI</span><span class="tag">FINBRA</span><span class="tag">FPM</span><span class="tag">PNCP</span><span class="tag">TransfereGov</span></p>
+          <p style="margin-top:10px">Habilita previsão de arrecadação e automações de planejamento, foco explícito do PRD.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <div class="section-title">
+        <h2>Roadmap recomendado</h2>
+        <p>Sequência para absorver o melhor da Base dos Dados sem perder o encaixe Fabric.</p>
+      </div>
+      <div class="timeline">
+        <div class="card step">
+          <h3>0–30 dias</h3>
+          <ul>
+            <li>Remover segredos do Git e rotacionar credenciais.</li>
+            <li>CI mínimo com scan de segredo e validação de notebooks.</li>
+            <li>Definir template de contrato de produto de dados.</li>
+          </ul>
+        </div>
+        <div class="card step">
+          <h3>30–60 dias</h3>
+          <ul>
+            <li>Parametrizar ingestão ACTO e dados públicos por tabela de configuração.</li>
+            <li>Implantar checks de qualidade inspirados em dbt.</li>
+            <li>Criar diretórios canônicos de município, UF e tempo.</li>
+          </ul>
+        </div>
+        <div class="card step">
+          <h3>60–90 dias</h3>
+          <ul>
+            <li>Pilotar Saúde, Educação e SICONFI como produtos com contrato completo.</li>
+            <li>Publicar catálogo inicial e status de qualidade por produto.</li>
+            <li>Separar dev/prod no fluxo ALM Fabric.</li>
+          </ul>
+        </div>
+        <div class="card step">
+          <h3>90+ dias</h3>
+          <ul>
+            <li>Provisionamento automatizado de novos municípios.</li>
+            <li>Shortcuts OneLake para dados públicos compartilhados.</li>
+            <li>Camada de IA/assistente apenas sobre produtos documentados.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Decisão recomendada</h2>
+        <p>Diretriz final para arquitetura e produto.</p>
+      </div>
+      <div class="callout">
+        <strong>Manter o Microsoft Fabric como plataforma operacional do DataHub Municipal.</strong> Ele já entrega Lakehouse, SQL Endpoint, Power BI, semantic models, notebooks, pipelines e governança Microsoft, que combinam com prefeituras. Usar a Base dos Dados como referência para desenhar a disciplina de produto de dados: contratos, testes, diretórios, metadados, onboarding e cobertura de fontes públicas nacionais.
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>Fontes analisadas: repositório `basedosdados-fork-pipelines`, pasta `Lakehouse%20Eicon`, PRD `spec_datahub_municipal.md` e documentação interna em `.docs/`. Análise estática; não inclui execução em BigQuery, Fabric ou Power BI.</p>
+    </footer>
+  </main>
+</body>
+</html>

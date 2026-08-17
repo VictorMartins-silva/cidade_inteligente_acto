@@ -1,0 +1,12 @@
+{
+  "folders": [
+    { "name": "acervo (conhecimento)", "path": "C:\\Users\\victor.silva\\Desktop\\PROJETOS\\Mapeamento_fabric\\Documentação_Fabric\\acervo" },
+    { "name": "lakehouse-inmov (código)", "path": "C:\\Users\\victor.silva\\acervo" }
+  ],
+  "settings": {
+    "search.exclude": {
+      "**/StagingLakehouseForDataflows_*/**": true,
+      "**/StagingWarehouseForDataflows_*/**": true
+    }
+  }
+}
