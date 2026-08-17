@@ -1,0 +1,12 @@
+{
+  "action": "rm",
+  "files": [
+    "specs/spec_drive_semana_04_05_2026.md",
+    "specs/spec_drive_semana_11_05_2026.md",
+    "specs/spec_drive_semana_25_05_2026.md",
+    "specs/spec_drive_semana_08_06_2026.md",
+    "specs/spec_drive_semana_15_06_2026.md",
+    "specs/spec_drive_semana_22_06_2026.md",
+    "specs/spec_drive_semana_29_06_2026.md"
+  ]
+}
