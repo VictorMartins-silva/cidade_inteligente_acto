@@ -6,6 +6,21 @@
 
 ---
 
+## 🎯 QUICK ACCESS — Atalhos para Hoje
+
+| O Quê | Link | Tempo |
+|---|---|---|
+| **Novo Dev?** | `QUICK_START_NOVO_DEV.md` | 15 min |
+| **Analista de Dados?** | `QUICK_START_ANALISTA.md` | <5 min |
+| **Arquiteto/Tech Lead?** | `QUICK_START_ARQUITETO.md` | <10 min |
+| **Qual é o status de riscos?** | `DASHBOARD_RISCOS.md` | <30 seg |
+| **Saúde do meu município?** | `01-Municípios/[municipio]/STATUS_[MUNICIPIO].md` | <1 min |
+| **Qual notebook fazer?** | `MAPA_GITHUB_NOTEBOOKS.md` | <2 min |
+| **Conhecimento duplicado?** | `CONSOLIDACAO_CONHECIMENTO.md` | <5 min |
+| **Links estão ok?** | `VALIDACAO_LINKS.md` | <2 min |
+
+---
+
 ## Municípios
 
 | Município | Pasta | README | Status |
