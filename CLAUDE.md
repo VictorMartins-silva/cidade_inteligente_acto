@@ -90,38 +90,18 @@ Notebooks without any identified pipeline (manual execution only): `nb_gold_acto
 
 ---
 
-## Ver Também
+## Referências Rápidas
 
-- [[_mapa-do-vault]] — índice geral do vault
-- [[Conhecimento/Fabric/fabric-workspace-acto-cidade-inteligente|fabric-workspace-acto-cidade-inteligente]] — workspace completo Acto Cidade Inteligente
-- [[Conhecimento/Fabric/pipeline-acto-santos-fabric|pipeline-acto-santos-fabric]] — fluxo Data Factory + notebooks
-- [[Projetos/acto-santos-pipeline]] — projeto ACTO Santos
-
-
-### Arquitetura Modular (Master-Sub)
-
-O esquema abaixo demonstra como a **Pipeline Mestre** atua como um orquestrador central, delegando a execução para sub-pipelines independentes. Isso remove a poluição visual e permite que cada domínio (SSP, IBGE, CAGED) tenha seu próprio ciclo de vida.
+- **Índice geral:** `00_MAPA.md` — navegação centralizada
+- **Referência técnica completa:** `GUIA_COMPLETO_FABRIC_MEGA.md`
+- **README por município:** Cada pasta (Santos/, Osasco/, Acto/) tem seu próprio README.md
 
 ---
 
-### 🔄 Comparativo de Fluxo
+## 🚀 Quick Start para Novo Dev
 
-|Elemento|Como é hoje (Monólito)|Como ficaria (Desacoplado)|
-|---|---|---|
-|**Visão Geral**|Uma única pipeline com 4 blocos `If` gigantes.|Uma pipeline mestre com 4 ícones de `Invoke Pipeline`.|
-|**Passagem de Dados**|`Activity('Checar Fontes').output` direto no `If`.|Parâmetros passados via `@json()` para a sub-pipeline.|
-|**Controle de Erro**|Se um `If` trava, a visualização do erro é misturada.|Se o SSP falha, a sub-pipeline de SSP fica vermelha, a Mestre segue.|
-|**Reprocessamento**|Requer rodar tudo ou forçar parâmetros na Mestre.|Você abre a `pl_ingest_caged` e roda apenas ela.|
-
----
-
-### 📝 Resumo Técnico da Mudança
-
-1. **Pipeline Mestre (`pl_monitoramento_master`):**
-    - Contém apenas o notebook `Checar Fontes`.
-    - Invoca as sub-pipelines em paralelo.
-    - Finaliza com o `nb_atualizar_status_painel` (lendo os logs do Lakehouse).
-2. **Sub-Pipelines (ex: `pl_ingest_ssp`):**
-    - Recebem parâmetros como `ANO`, `CONSULTA_ID` e `NOVO_DADO`.
-    - Contêm a lógica interna: `If (NOVO_DADO) -> Ingestão -> Gold`.
-    - Podem ser agendadas ou disparadas isoladamente.
+1. Leia este arquivo (CLAUDE.md) — contexto + riscos críticos
+2. Abra `00_MAPA.md` — encontre seu município/domínio
+3. Vá até o README.md específico (ex: Santos/README.md)
+4. Localize o notebook que precisa modificar
+5. Consulte `GUIA_COMPLETO_FABRIC_MEGA.md` para padrões técnicos detalhados
